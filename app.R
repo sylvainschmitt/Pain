@@ -1,49 +1,122 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
-
+library(rhandsontable)
 library(shiny)
 
-# Define UI for application that draws a histogram
-ui <- fluidPage(
+DF = data.frame(Type = c(rep("Nature",4), rep("Graines",3), rep("PAC",1), rep("Sarasin",2)),
+                Poids = as.character(c(0.5, 1, 1.5, 2, 0.5, 1, 1.5, 0.25, 0.5, 1)),
+                "Le chêne" = as.integer(rep(0, 10)))
 
-    # Application title
-    titlePanel("Old Faithful Geyser Data"),
-
-    # Sidebar with a slider input for number of bins 
+ui <- shinyUI(fluidPage(
+    
+    titlePanel("Pain"),
     sidebarLayout(
         sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
+            helpText("Shiny app based on an example given in the rhandsontable package.", 
+                     "Right-click on the table to delete/insert rows.", 
+                     "Double-click on a cell to edit"),
+            
+            br(), 
+            
+            wellPanel(
+                h3("Save table"), 
+                div(class='row', 
+                    div(class="col-sm-6", 
+                        actionButton("save", "Save")),
+                    div(class="col-sm-6",
+                        radioButtons("fileType", "File type", c("ASCII", "RDS")))
+                )
+            )
+            
         ),
-
-        # Show a plot of the generated distribution
+        
         mainPanel(
-           plotOutput("distPlot")
+
+            br(), br(), 
+            
+            fluidRow(
+                h3("Débouchés"), 
+                column(4,
+                       uiOutput("ui_newcolname"),
+                       actionButton("addcolumn", "Ajouter")
+                ),
+                column(4,
+                       uiOutput("ui_rmcolname"),
+                       actionButton("rmcolumn", "Supprimer")
+                ),
+                column(4,
+                       actionButton("quit", "Quitter", icon = icon("sign-out-alt"))
+                )
+            ),
+            
+            rHandsontableOutput("hot"),
+            br()
+            
         )
     )
-)
+))
 
-# Define server logic required to draw a histogram
-server <- function(input, output) {
-
-    output$distPlot <- renderPlot({
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white')
+server <- shinyServer(function(input, output) {
+    
+    values <- reactiveValues()
+    
+    ## Handsontable
+    observe({
+        if (!is.null(input$hot)) {
+            values[["previous"]] <- isolate(values[["DF"]])
+            DF = hot_to_r(input$hot)
+        } else {
+            if (is.null(values[["DF"]]))
+                DF <- DF
+            else
+                DF <- values[["DF"]]
+        }
+        values[["DF"]] <- DF
     })
-}
+    
+    output$hot <- renderRHandsontable({
+        DF <- values[["DF"]]
+        if (!is.null(DF))
+            rhandsontable(DF, useTypes = TRUE, stretchH = "all")
+    })
+    
+    ## Save 
+    observeEvent(input$save, {
+        fileType <- isolate(input$fileType)
+        finalDF <- isolate(values[["DF"]])
+        if(fileType == "ASCII"){
+            dput(finalDF, file=file.path("./", sprintf("%s.txt", outfilename)))
+        }
+        else{
+            saveRDS(finalDF, file=file.path("./", sprintf("%s.rds", outfilename)))
+        }
+    }
+    )
+
+    ## Débouchés
+    output$ui_newcolname <- renderUI({
+        textInput("newcolumnname", "Ajouter", sprintf("débouché%s", 1+ncol(values[["DF"]])-2))
+    })
+    observeEvent(input$addcolumn, {
+        DF <- isolate(values[["DF"]])
+        values[["previous"]] <- as.integer(rep(0, nrow(DF)))
+        newcolumn <- eval(parse(text=sprintf('%s(nrow(DF))', "integer")))
+        values[["DF"]] <- setNames(cbind(DF, newcolumn, stringsAsFactors=FALSE), c(names(DF), isolate(input$newcolumnname)))
+    })
+    output$ui_rmcolname <- renderUI({
+        DF <- isolate(values[["DF"]])
+        selectInput("rmcolumnname", "Supprimer", names(DF)[-c(1,2)])
+    })
+    observeEvent(input$rmcolumn, {
+        DF <- isolate(values[["DF"]])
+        values[["DF"]] <- DF[,-which(names(DF) == input$rmcolumnname)]
+    })
+    
+    ## Quit
+    observeEvent(input$quit, {
+        stopApp()
+    })
+    
+})
 
 # Run the application 
 shinyApp(ui = ui, server = server)
+
