@@ -8,7 +8,7 @@ Description: Shiny App for Mikael's bread.
 URL: https://github.com/sylvainschmitt/pain
 BugReports: https://github.com/sylvainschmitt/pain/issues
 License: GPL-3
-Depends: R (>= 3.6.0)
+Depends: R (>= 3.4.0)
 Imports: 
     ggplot2 (>= 3.4.0),
     dplyr (>= 0.8.1),
