@@ -1,3 +1,6 @@
+library(rhandsontable)
+library(shiny)
+
 ui <- shinyUI(fluidPage(
 
     titlePanel("Pain"),
