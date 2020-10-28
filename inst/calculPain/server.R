@@ -5,59 +5,10 @@ DF = data.frame(Type = c(rep("Nature",4), rep("Graines",3), rep("PAC",1), rep("S
                 Poids = as.character(c(0.5, 1, 1.5, 2, 0.5, 1, 1.5, 0.25, 0.5, 1)),
                 "Le chêne" = as.integer(rep(0, 10)))
 
-ui <- shinyUI(fluidPage(
-    
-    titlePanel("Pain"),
-    sidebarLayout(
-        sidebarPanel(
-            helpText("Shiny app based on an example given in the rhandsontable package.", 
-                     "Right-click on the table to delete/insert rows.", 
-                     "Double-click on a cell to edit"),
-            
-            br(), 
-            
-            wellPanel(
-                h3("Save table"), 
-                div(class='row', 
-                    div(class="col-sm-6", 
-                        actionButton("save", "Save")),
-                    div(class="col-sm-6",
-                        radioButtons("fileType", "File type", c("ASCII", "RDS")))
-                )
-            )
-            
-        ),
-        
-        mainPanel(
-
-            br(), br(), 
-            
-            fluidRow(
-                h3("Débouchés"), 
-                column(4,
-                       uiOutput("ui_newcolname"),
-                       actionButton("addcolumn", "Ajouter")
-                ),
-                column(4,
-                       uiOutput("ui_rmcolname"),
-                       actionButton("rmcolumn", "Supprimer")
-                ),
-                column(4,
-                       actionButton("quit", "Quitter", icon = icon("sign-out-alt"))
-                )
-            ),
-            
-            rHandsontableOutput("hot"),
-            br()
-            
-        )
-    )
-))
-
 server <- shinyServer(function(input, output) {
-    
+
     values <- reactiveValues()
-    
+
     ## Handsontable
     observe({
         if (!is.null(input$hot)) {
@@ -71,14 +22,14 @@ server <- shinyServer(function(input, output) {
         }
         values[["DF"]] <- DF
     })
-    
+
     output$hot <- renderRHandsontable({
         DF <- values[["DF"]]
         if (!is.null(DF))
             rhandsontable(DF, useTypes = TRUE, stretchH = "all")
     })
-    
-    ## Save 
+
+    ## Save
     observeEvent(input$save, {
         fileType <- isolate(input$fileType)
         finalDF <- isolate(values[["DF"]])
@@ -109,14 +60,10 @@ server <- shinyServer(function(input, output) {
         DF <- isolate(values[["DF"]])
         values[["DF"]] <- DF[,-which(names(DF) == input$rmcolumnname)]
     })
-    
+
     ## Quit
     observeEvent(input$quit, {
         stopApp()
     })
-    
+
 })
-
-# Run the application 
-shinyApp(ui = ui, server = server)
-
