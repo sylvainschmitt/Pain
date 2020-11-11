@@ -9,6 +9,9 @@ calculTotaux(pains)
 \arguments{
 \item{pains}{df. Table des pains.}
 }
+\value{
+
+}
 \description{
 Calcul totaux
 }

@@ -4,12 +4,13 @@
 \alias{graphFournees}
 \title{Graphique des fournees}
 \usage{
-graphFournees(pains, fournees)
+graphFournees(fournees)
 }
 \arguments{
-\item{pains}{df. Table des pains.}
-
 \item{fournees}{df. Table des fournees.}
+}
+\value{
+
 }
 \description{
 Graphique des fournees

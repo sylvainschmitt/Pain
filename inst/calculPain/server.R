@@ -7,7 +7,9 @@ DF = data.frame(Type = c(rep("Nature",4), rep("Graines",3), rep("PAC",1), rep("S
 
 server <- shinyServer(function(input, output) {
 
-    values <- reactiveValues()
+    values <- reactiveValues(totaux = data.frame(),
+                             fournees = data.frame(),
+                             graphique = NULL)
 
     ## Handsontable
     observe({
@@ -44,7 +46,7 @@ server <- shinyServer(function(input, output) {
 
     ## Débouchés
     output$ui_newcolname <- renderUI({
-        textInput("newcolumnname", "Ajouter", sprintf("débouché%s", 1+ncol(values[["DF"]])-2))
+        textInput("newcolumnname", "Ajouter", sprintf("débouché %s", 1+ncol(values[["DF"]])-2))
     })
     observeEvent(input$addcolumn, {
         DF <- isolate(values[["DF"]])
@@ -59,6 +61,24 @@ server <- shinyServer(function(input, output) {
     observeEvent(input$rmcolumn, {
         DF <- isolate(values[["DF"]])
         values[["DF"]] <- DF[,-which(names(DF) == input$rmcolumnname)]
+    })
+
+    ## Table
+    observeEvent(input$makeTable, {
+
+        DF <- isolate(values[["DF"]])
+        totaux <- calculTotaux(DF)
+        fournees <- calculFournees(totaux)
+        values[["totaux"]] <- totaux
+        values[["fournees"]] <- fournees
+    })
+    output$ui_table <- renderTable({
+        values$fournees
+    })
+
+    ## Graphique
+    output$ui_graphique <- renderPlot({
+        graphFournees(values[["fournees"]])
     })
 
     ## Quit

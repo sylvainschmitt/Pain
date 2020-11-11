@@ -15,12 +15,15 @@ Imports:
     shiny (>= 1.3.2),
     reshape2 (>= 1.4.3),
     tidyr (>= 0.8.3),
+    tibble (>= 3.0.4),
     rhandsontable (>= 0.3.7)
 Encoding: UTF-8
 LazyData: true
 Suggests: 
-    testthat (>= 2.1.0)
-RoxygenNote: 6.1.1
+    testthat (>= 2.1.0),
+    knitr,
+    rmarkdown
+RoxygenNote: 7.1.1
 Collate: 
     'utils-pipe.R'
     'calculFournees.R'
@@ -30,3 +33,4 @@ Collate:
     'genPains.R'
     'genPoids.R'
     'graphFournees.R'
+VignetteBuilder: knitr

@@ -11,6 +11,9 @@ calculFournees(pains, Vm = 60)
 
 \item{Vm}{int. Volume maximum d'une fournee.}
 }
+\value{
+
+}
 \description{
 Calcul fournees
 }

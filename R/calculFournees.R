@@ -1,5 +1,6 @@
 #' @include utils-pipe.R
 #' @importFrom dplyr filter arrange
+#' @importFrom tibble rownames_to_column
 NULL
 
 #' Calcul fournees
@@ -68,6 +69,10 @@ calculFournees <- function(pains, Vm = 60){
     Vfin <- Vf - f[f < 60]
     fournees[as.character(fin$Type), as.numeric(names(Vfin))] <- Vfin
   }
+
+  fournees <- as.data.frame(fournees)
+  names(fournees) <-  paste("Fournee", 1:ncol(fournees))
+  fournees <- rownames_to_column(fournees, "Type")
 
   return(fournees)
 }

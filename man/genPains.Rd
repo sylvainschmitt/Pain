@@ -9,6 +9,9 @@ genPains(Vm = 60)
 \arguments{
 \item{Vm}{int. Volume maximum d'une fournee.}
 }
+\value{
+
+}
 \description{
 Generate fake totaux for pains.
 }

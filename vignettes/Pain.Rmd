@@ -1,0 +1,36 @@
+---
+title: "Pain"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Pain}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(Pain)
+```
+
+```{r}
+pains <- data.frame(Type = c(rep("Nature",4), rep("Graines",3), rep("PAC",1), rep("Sarasin",2)),
+                    Poids = as.character(c(0.5, 1, 1.5, 2, 0.5, 1, 1.5, 0.25, 0.5, 1)),
+                    "Le chêne" = as.integer(sample(0:10, 10)),
+                    "RAB" = as.integer(sample(0:10, 10)))
+totaux <- calculTotaux(pains)
+fournees <- calculFournees(totaux)
+```
+
+```{r}
+knitr::kable(fournees)
+```
+
+```{r}
+graphFournees(fournees)
+```

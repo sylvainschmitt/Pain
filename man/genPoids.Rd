@@ -15,6 +15,9 @@ genPoids(min = 0, max = 300, mean = 90, sd = 20)
 
 \item{sd}{int. SD value for normal distribution.}
 }
+\value{
+
+}
 \description{
 Generate Poids
 }

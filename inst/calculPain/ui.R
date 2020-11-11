@@ -6,9 +6,7 @@ ui <- shinyUI(fluidPage(
     titlePanel("Pain"),
     sidebarLayout(
         sidebarPanel(
-            helpText("Shiny app based on an example given in the rhandsontable package.",
-                     "Right-click on the table to delete/insert rows.",
-                     "Double-click on a cell to edit"),
+            helpText("Double-click on a cell to edit"),
 
             br(),
 
@@ -17,16 +15,12 @@ ui <- shinyUI(fluidPage(
                 div(class='row',
                     div(class="col-sm-6",
                         actionButton("save", "Save")),
-                    div(class="col-sm-6",
-                        radioButtons("fileType", "File type", c("ASCII", "RDS")))
                 )
             )
 
         ),
 
         mainPanel(
-
-            br(), br(),
 
             fluidRow(
                 h3("Débouchés"),
@@ -42,9 +36,26 @@ ui <- shinyUI(fluidPage(
                        actionButton("quit", "Quitter", icon = icon("sign-out-alt"))
                 )
             ),
+            br(),
 
             rHandsontableOutput("hot"),
-            br()
+            br(),
+
+            fluidRow(
+                column(6,
+                       h3("Table"),
+                       actionButton("makeTable", "Générer la table"),
+                       uiOutput("ui_table")
+                ),
+                column(6,
+                       h3("Graphique"),
+                       # actionButton("makeGraphique", "Générer le graphique"),
+                       plotOutput("ui_graphique")
+                ),
+            ),
+            br(),
+
+
 
         )
     )
